@@ -1615,7 +1615,7 @@ $('document').ready(function () {
                     table_success += '<th scope="col">#</th>';
                     table_success += '<th scope="col">Nome</th>';
                     table_success += '<th scope="col">Numero</th>';
-                    table_success += '<th scope="col">Perfil</th>';
+                    table_success += '<th scope="col">Foto Perfil</th>';
                     table_success += '</tr>';
 					table_success += '</thead>';
 					table_success += '<tbody id="table_success"></tbody>';
@@ -1631,9 +1631,8 @@ $('document').ready(function () {
                                 if(!value.profilePicThumbObj.eurl){
                                     table_success += '<td><img class="img-fluid" src="/images/sem_foto.png" style="width: 28px; height: 28px"></td>';
                                 }else{
-                                    table_success += '<td><img class="img-fluid" src="'+value.profilePicThumbObj.eurl+'" style="width: 28px; height: 28px"></td>';
+                                    table_success += '<td><a href="'+value.profilePicThumbObj.eurl+'" target="_blank" ><img class="img-fluid" src="'+value.profilePicThumbObj.eurl+'" style="width: 28px; height: 28px"></a></td>';
                                 }
-                                
                                 table_success += '</tr>';
                                 count++;
                             }
@@ -1679,7 +1678,7 @@ $('document').ready(function () {
                 $("#getAllGroups").html('<i class="fas fa-spinner fa-spin"></i> Carregando...');
             },
             success: function (response) {
-                //console.log(response);
+                console.log(response);
                 //https://www.geeksforgeeks.org/how-to-fetch-data-from-json-file-and-display-in-html-table-using-jquery/
                 $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
                 var table_success = '';
@@ -1737,6 +1736,7 @@ $('document').ready(function () {
                     table_success += '<tr>';
                     table_success += '<th scope="col">#</th>';
                     table_success += '<th scope="col">Grupo</th>';
+                    table_success += '<th scope="col">Foto Grupo</th>';
                     table_success += '</tr>';
 					table_success += '</thead>';
 					table_success += '<tbody id="table_success"></tbody>';
@@ -1748,6 +1748,11 @@ $('document').ready(function () {
                                 table_success += '<tr>';
                                 table_success += '<td>' + count + '</td>';
                                 table_success += '<td>'+value.contact.name+'</td>';
+                                if(!value.contact.profilePicThumbObj.eurl){
+                                    table_success += '<td><img class="img-fluid" src="/images/sem_foto.png" style="width: 28px; height: 28px"></td>';
+                                }else{
+                                    table_success += '<td><a href="'+value.contact.profilePicThumbObj.eurl+'" target="_blank" ><img class="img-fluid" src="'+value.contact.profilePicThumbObj.eurl+'" style="width: 28px; height: 28px"></a></td>';
+                                }
                                 table_success += '</tr>';
                                 count++;
                             }
