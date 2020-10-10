@@ -778,9 +778,7 @@ module.exports = class Sessions {
                         return erro;
                     });
                 });
-                return {
-                    resultgetAllContacts
-                };
+                return resultgetAllContacts;
                 //return { result: "success" };
             } else {
                 if (session.state == "STARTING") {
@@ -1090,9 +1088,7 @@ module.exports = class Sessions {
                         return erro;
                     });
                 });
-                return {
-                    resultgetAllGroups
-                };
+                return resultgetAllGroups;
                 //return { result: "success" };
             } else {
                 if (session.state == "STARTING") {

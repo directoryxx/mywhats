@@ -256,7 +256,7 @@ router.post("/getAllChats", async (req, res, next) => {
 // ------------------------------------------------------------------------------------------------//
 //
 //
-router.post("/getAllGroups/:SessionName", async (req, res, next) => {
+router.post("/getAllGroups", async (req, res, next) => {
     var result = await Sessions.getAllGroups(req.body.SessionName);
     res.json(result);
 }); //getAllGroups

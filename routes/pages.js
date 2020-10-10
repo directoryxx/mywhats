@@ -49,6 +49,11 @@ router.get("/checkNumberStatusMult", async (req, res) => {
 });
 //
 //
+router.get("/getData", async (req, res) => {
+    res.render("sistem/getData");
+});
+//
+//
 // ------------------------------------------------------------------------------------------------------- //
 //
 //

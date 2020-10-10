@@ -1347,7 +1347,7 @@ $('document').ready(function () {
                     var table_error = '';
                     //
                     if (response.result == 'error' && response.state == 'NOTFOUND') {
-                        $("#sendTexto").html('<i class="fas fa-paper-plane"></i> Enviar');
+                        $("#checkNumberStatusMassa").html('<i class="fas fa-paper-plane"></i> Enviar');
                         //
                         Lobibox.notify('warning', {
                             title: false,
@@ -1501,7 +1501,7 @@ $('document').ready(function () {
         var SessionName = $("#SessionName").val();
         $.ajax({
             type: 'GET',
-            url: '/sistem/getAllGroups/' + SessionName,
+            url: '/sistem/getAllGroups' + SessionName,
             //data: data,
             dataType: 'json',
             beforeSend: function () {
@@ -1511,7 +1511,7 @@ $('document').ready(function () {
                 //
                 $("#BotaoGrupoText").html('Carregar Grupos');
                 //
-                $.each(response.resultgetAllGroups, function (key, value) {
+                $.each(response, function (key, value) {
                     dropdown.append($('<option></option>').attr('value', value.contact.id.user).text(value.contact.name));
                 });
             }
@@ -1527,7 +1527,7 @@ $('document').ready(function () {
         var SessionName = $("#SessionName").val();
         $.ajax({
             type: 'GET',
-            url: '/sistem/getAllGroups/' + SessionName,
+            url: '/sistem/getAllGroups' + SessionName,
             //data: data,
             dataType: 'json',
             beforeSend: function () {
@@ -1537,10 +1537,247 @@ $('document').ready(function () {
                 //
                 $("#BotaoGrupoImg").html('Carregar Grupos');
                 //
-                $.each(response.resultgetAllGroups, function (key, value) {
+                $.each(response, function (key, value) {
                     dropdown.append($('<option></option>').attr('value', value.contact.id.user).text(value.contact.name));
                 });
             }
+        });
+    });
+    //
+    $("#getAllContacts").on("click", function () {
+        $('#table_success').html('');
+        var SessionName = $("#SessionName").val();
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: '/sistem/getAllContacts',
+            data: { "SessionName": SessionName },
+            beforeSend: function () {
+                $("#getAllContacts").html('<i class="fas fa-spinner fa-spin"></i> Carregando...');
+            },
+            success: function (response) {
+                //console.log(response);
+                //https://www.geeksforgeeks.org/how-to-fetch-data-from-json-file-and-display-in-html-table-using-jquery/
+                $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                var table_success = '';
+                //
+                if (response.result == 'error' && response.state == 'NOTFOUND') {
+                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                    //
+                    Lobibox.notify('warning', {
+                        title: false,
+                        soundPath: '/lobibox/sounds/',
+                        soundExt: '.ogg',
+                        sound: true,
+                        iconSource: "fontAwesome",
+                        icon: 'fas fa-times-circle',
+                        size: 'mini',
+                        delay: 5000,
+                        msg: response.message
+                    });
+                    //
+                } else if (response.result == 'info' && response.state == 'STARTING') {
+                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                    //
+                    Lobibox.notify('warning', {
+                        title: false,
+                        soundPath: '/lobibox/sounds/',
+                        soundExt: '.ogg',
+                        sound: true,
+                        iconSource: "fontAwesome",
+                        icon: 'fas fa-times-circle',
+                        size: 'mini',
+                        delay: 5000,
+                        msg: response.message
+                    });
+                    //
+                } else if (response.result == 'warning' && response.state == 'QRCODE') {
+                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                    //
+                    Lobibox.notify('warning', {
+                        title: false,
+                        soundPath: '/lobibox/sounds/',
+                        soundExt: '.ogg',
+                        sound: true,
+                        iconSource: "fontAwesome",
+                        icon: 'fas fa-times-circle',
+                        size: 'mini',
+                        delay: 5000,
+                        msg: response.message
+                    });
+                    //
+                } else {
+                    var count = 1;
+                    // ITERATING THROUGH OBJECTS
+                    table_success += '<table class="table table-striped table-hover">';
+					table_success += '<thead class="thead-dark">';
+                    table_success += '<tr>';
+                    table_success += '<th scope="col">#</th>';
+                    table_success += '<th scope="col">Nome</th>';
+                    table_success += '<th scope="col">Numero</th>';
+                    table_success += '<th scope="col">Perfil</th>';
+                    table_success += '</tr>';
+					table_success += '</thead>';
+					table_success += '<tbody id="table_success"></tbody>';
+
+                    $.each(response, function (key, value) {
+                        //CONSTRUCTION OF ROWS HAVING 
+                        // DATA FROM JSON OBJECT
+                            if (value.isMyContact === true) {
+                                table_success += '<tr>';
+                                table_success += '<td>' + count + '</td>';
+                                table_success += '<td>'+value.name+'</td>';
+                                table_success += '<td>'+value.id.user+'</td>';
+                                if(!value.profilePicThumbObj.eurl){
+                                    table_success += '<td><img class="img-fluid" src="/images/sem_foto.png" style="width: 28px; height: 28px"></td>';
+                                }else{
+                                    table_success += '<td><img class="img-fluid" src="'+value.profilePicThumbObj.eurl+'" style="width: 28px; height: 28px"></td>';
+                                }
+                                
+                                table_success += '</tr>';
+                                count++;
+                            }
+                            
+                    });
+                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                    //
+                    table_success += '</table>';
+                    //INSERTING ROWS INTO TABLE
+                    $('#table_success').html(table_success);
+                    //
+                }
+            },
+            error: (e) => {
+                $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                //
+                Lobibox.notify('info', {
+                    title: false,
+                    soundPath: '/lobibox/sounds/',
+                    soundExt: '.ogg',
+                    sound: true,
+                    iconSource: "fontAwesome",
+                    icon: 'fas fa-info-circle',
+                    size: 'mini',
+                    delay: 5000,
+                    msg: 'Erro interno, não foi possivel listar os contatos!'
+                });
+
+            }
+
+        });
+    });
+    //
+    $("#getAllGroups").on("click", function () {
+        $('#table_success').html('');
+        var SessionName = $("#SessionName").val();
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: '/sistem/getAllGroups',
+            data: { "SessionName": SessionName },
+            beforeSend: function () {
+                $("#getAllGroups").html('<i class="fas fa-spinner fa-spin"></i> Carregando...');
+            },
+            success: function (response) {
+                //console.log(response);
+                //https://www.geeksforgeeks.org/how-to-fetch-data-from-json-file-and-display-in-html-table-using-jquery/
+                $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                var table_success = '';
+                //
+                if (response.result == 'error' && response.state == 'NOTFOUND') {
+                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                    //
+                    Lobibox.notify('warning', {
+                        title: false,
+                        soundPath: '/lobibox/sounds/',
+                        soundExt: '.ogg',
+                        sound: true,
+                        iconSource: "fontAwesome",
+                        icon: 'fas fa-times-circle',
+                        size: 'mini',
+                        delay: 5000,
+                        msg: response.message
+                    });
+                    //
+                } else if (response.result == 'info' && response.state == 'STARTING') {
+                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                    //
+                    Lobibox.notify('warning', {
+                        title: false,
+                        soundPath: '/lobibox/sounds/',
+                        soundExt: '.ogg',
+                        sound: true,
+                        iconSource: "fontAwesome",
+                        icon: 'fas fa-times-circle',
+                        size: 'mini',
+                        delay: 5000,
+                        msg: response.message
+                    });
+                    //
+                } else if (response.result == 'warning' && response.state == 'QRCODE') {
+                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                    //
+                    Lobibox.notify('warning', {
+                        title: false,
+                        soundPath: '/lobibox/sounds/',
+                        soundExt: '.ogg',
+                        sound: true,
+                        iconSource: "fontAwesome",
+                        icon: 'fas fa-times-circle',
+                        size: 'mini',
+                        delay: 5000,
+                        msg: response.message
+                    });
+                    //
+                } else {
+                    var count = 1;
+                    // ITERATING THROUGH OBJECTS
+                    table_success += '<table class="table table-striped table-hover">';
+					table_success += '<thead class="thead-dark">';
+                    table_success += '<tr>';
+                    table_success += '<th scope="col">#</th>';
+                    table_success += '<th scope="col">Grupo</th>';
+                    table_success += '</tr>';
+					table_success += '</thead>';
+					table_success += '<tbody id="table_success"></tbody>';
+
+                    $.each(response, function (key, value) {
+                        //CONSTRUCTION OF ROWS HAVING 
+                        // DATA FROM JSON OBJECT
+                            if (value.isGroup === true) {
+                                table_success += '<tr>';
+                                table_success += '<td>' + count + '</td>';
+                                table_success += '<td>'+value.contact.name+'</td>';
+                                table_success += '</tr>';
+                                count++;
+                            }
+                            
+                    });
+                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                    //
+                    table_success += '</table>';
+                    //INSERTING ROWS INTO TABLE
+                    $('#table_success').html(table_success);
+                    //
+                }
+            },
+            error: (e) => {
+                $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                //
+                Lobibox.notify('info', {
+                    title: false,
+                    soundPath: '/lobibox/sounds/',
+                    soundExt: '.ogg',
+                    sound: true,
+                    iconSource: "fontAwesome",
+                    icon: 'fas fa-info-circle',
+                    size: 'mini',
+                    delay: 5000,
+                    msg: 'Erro interno, não foi possivel listar os grupos!'
+                });
+
+            }
+
         });
     });
     //
