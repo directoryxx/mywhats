@@ -15,6 +15,9 @@ function soNumeros(string) {
     return parseInt(numsStr);
 }
 //
+// ------------------------------------------------------------------------------------------------//
+//
+// Funções básicas (uso)
 //
 router.post("/Start", async (req, res, next) => {
     //
@@ -101,10 +104,19 @@ router.post("/QRCode", async (req, res, next) => {
 // ------------------------------------------------------------------------------------------------------- //
 //
 //
+router.post("/Close", async (req, res, next) => {
+    var result = await Sessions.closeSession(req.body.SessionName);
+    res.json(result);
+}); //close
+//
+//
+// ------------------------------------------------------------------------------------------------------- //
+//
+//
 router.post("/sendText", async (req, res, next) => {
     var result = await Sessions.sendText(
         req.body.SessionName,
-        req.body.phonefull,
+        apenasNumeros(req.body.phonefull),
         req.body.msg
     );
     //console.log(result);
@@ -189,7 +201,7 @@ router.post("/sendImageGrupo", upload.single('FileImageGrupo'), async (req, res,
 router.get("/sendFile", async (req, res, next) => {
     var result = await Sessions.sendFile(
         req.body.SessionName,
-        req.body.number,
+        apenasNumeros(req.body.phonefull),
         req.body.base64Data,
         req.body.fileName,
         req.body.caption
@@ -199,6 +211,15 @@ router.get("/sendFile", async (req, res, next) => {
 //
 // ------------------------------------------------------------------------------------------------//
 //
+//
+router.post("/getSessionTokenBrowser", async (req, res, next) => {
+    var result = await Sessions.getSessionTokenBrowser(req.body.SessionName);
+    res.json(result);
+}); //getBlockList
+//
+// ------------------------------------------------------------------------------------------------//
+//
+// Recuperando Dados
 //
 router.post("/getBlockList", async (req, res, next) => {
     var result = await Sessions.getBlockList(req.body.SessionName);
@@ -217,7 +238,10 @@ router.post("/getAllContacts", async (req, res, next) => {
 //
 //
 router.post("/loadAndGetAllMessagesInChat", async (req, res, next) => {
-    var result = await Sessions.loadAndGetAllMessagesInChat(req.body.SessionName, req.body.phonefull);
+    var result = await Sessions.loadAndGetAllMessagesInChat(
+        req.body.SessionName, 
+        apenasNumeros(req.body.phonefull)
+    );
     res.json(result);
 }); //loadAndGetAllMessagesInChat
 //
@@ -225,7 +249,10 @@ router.post("/loadAndGetAllMessagesInChat", async (req, res, next) => {
 //
 //
 router.post("/getStatus", async (req, res, next) => {
-    var result = await Sessions.getStatus(req.body.SessionName, req.body.phonefull);
+    var result = await Sessions.getStatus(
+        req.body.SessionName, 
+        apenasNumeros(req.body.phonefull)
+    );
     res.json(result);
 }); //getStatus
 //
@@ -233,7 +260,10 @@ router.post("/getStatus", async (req, res, next) => {
 //
 //
 router.post("/getNumberProfile", async (req, res, next) => {
-    var result = await Sessions.getNumberProfile(req.body.SessionName, req.body.phonefull);
+    var result = await Sessions.getNumberProfile(
+        req.body.SessionName, 
+        apenasNumeros(req.body.phonefull)
+     );
     res.json(result);
 }); //getNumberProfile
 //
@@ -265,7 +295,10 @@ router.post("/getAllGroups", async (req, res, next) => {
 //
 //
 router.post("/getProfilePicFromServer", async (req, res, next) => {
-    var result = await Sessions.getProfilePicFromServer(req.body.SessionName, req.body.phonefull);
+    var result = await Sessions.getProfilePicFromServer(
+        req.body.SessionName, 
+        apenasNumeros(req.body.phonefull)
+    );
     res.json(result);
 }); //getProfilePicFromServer
 //
@@ -299,16 +332,51 @@ router.post("/checkNumberStatusMult", upload.single('checkNumberStatusMassaConta
     res.json(result);
 }); //sendText
 //
-//
 // ------------------------------------------------------------------------------------------------//
 //
+// Funções de Grupo
 //
-router.post("/Close", async (req, res, next) => {
-    var result = await Sessions.closeSession(req.body.SessionName);
+router.post("/leaveGroup", async (req, res, next) => {
+    var result = await Sessions.leaveGroup(
+        req.body.SessionName,
+        req.body.groupId
+        );
     res.json(result);
 }); //close
 //
+router.post("/getGroupMembers", async (req, res, next) => {
+    var result = await Sessions.getGroupMembers(
+        req.body.SessionName,
+        req.body.groupId
+        );
+    res.json(result);
+}); //close
+//
+//
 // ------------------------------------------------------------------------------------------------//
 //
+//
+router.post("/testArry", async (req, res, next) => {
+    /*
+    var result = await Sessions.testArry(
+        req.file.buffer.toString('base64'),
+        req.file.mimetype,
+        req.file.originalname
+    );
+    */
+    //console.log(result);
+    res.json(req.body.testArry);
+}); //sendText
+//
+/*
+var fs = require('fs');
+fs.readFile('file.txt', function(err, data) {
+    if(err) throw err;
+    var array = data.toString().split("\n");
+    for(i in array) {
+        console.log(array[i]);
+    }
+});
+*/
 //
 module.exports = router;
