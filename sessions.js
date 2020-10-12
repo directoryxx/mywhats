@@ -205,6 +205,19 @@ module.exports = class Sessions {
         console.log("- Sinstema iniciado!");
         var session = Sessions.getSession(sessionName);
         await session.client.then(client => {
+            // Listen to messages
+            client.onMessage((message) => {
+                if (message.body === 'Oi' && message.isGroupMsg === false) {
+                    client
+                        .sendText(message.from, '🕷 Welcome Venom Bot 🕸')
+                        .then((result) => {
+                            console.log('Result', result); //return object success
+                        })
+                        .catch((erro) => {
+                            console.error('Error', erro); //return object error
+                        });
+                }
+            });
             // State change
             client.onStateChange((state) => {
                 console.log('- Status do sistema:', state);
@@ -218,18 +231,13 @@ module.exports = class Sessions {
                     client.useHere();
                 }
             });
-            //
-            client.onMessage((message) => {
-                if (message.body === 'Oi' && message.isGroupMsg === false) {
-                    client
-                        .sendText(message.from, '🕷 Welcome Venom Bot 🕸')
-                        .then((result) => {
-                            console.log('Result', result); //return object success
-                        })
-                        .catch((erro) => {
-                            console.error('Error', erro); //return object error
-                        });
-                }
+            // Listen to ack's
+            client.onAck((ack) => {
+                console.log('- Listen to acks:', ack);
+              });
+            // Listen when client has been added to a group
+            client.onAddedToGroup((chatEvent) => {
+                console.log('- Listen when client has been added to a group:', chatEvent);
             });
         });
     } //setup
@@ -866,13 +874,13 @@ module.exports = class Sessions {
     //
     //
     // Recuperar status de contato
-    static async getStatus(sessionName) {
+    static async getStatus(sessionName, number) {
         console.log("- Obtendo status!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
                 var resultgetStatus = await session.client.then(async client => {
-                    return await client.getStatus(contactId + '@c.us').then((result) => {
+                    return await client.getStatus(number + '@c.us').then((result) => {
                         //console.log('Result: ', result); //return object success
                         return result;
                     }).catch((erro) => {
@@ -880,9 +888,7 @@ module.exports = class Sessions {
                         return erro;
                     });
                 });
-                return {
-                    resultgetStatus
-                };
+                return resultgetStatus;
                 //return { result: "success" };
             } else {
                 if (session.state == "STARTING") {
@@ -918,13 +924,13 @@ module.exports = class Sessions {
     //
     //
     // Recuperar perfil de usuário
-    static async getNumberProfile(sessionName) {
+    static async getNumberProfile(sessionName, numero) {
         console.log("- Obtendo o perfil do número!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
                 var resultgetNumberProfile = await session.client.then(async client => {
-                    return await client.getNumberProfile(contactId + '@c.us').then((result) => {
+                    return await client.getNumberProfile(numero + '@c.us').then((result) => {
                         //console.log('Result: ', result); //return object success
                         return result;
                     }).catch((erro) => {
@@ -932,9 +938,7 @@ module.exports = class Sessions {
                         return erro;
                     });
                 });
-                return {
-                    resultgetNumberProfile
-                };
+                return resultgetNumberProfile;
                 //return { result: "success" };
             } else {
                 if (session.state == "STARTING") {

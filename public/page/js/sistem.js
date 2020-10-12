@@ -1543,7 +1543,129 @@ $('document').ready(function () {
             }
         });
     });
-    //
+   //
+   $("#getBlockList").on("click", function () {
+    $('#table_success').html('');
+    var SessionName = $("#SessionName").val();
+    event.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: '/sistem/getBlockList',
+        data: { "SessionName": SessionName },
+        beforeSend: function () {
+            $("#getBlockList").html('<i class="fas fa-spinner fa-spin"></i> Carregando...');
+        },
+        success: function (response) {
+            //console.log(response);
+            //https://www.geeksforgeeks.org/how-to-fetch-data-from-json-file-and-display-in-html-table-using-jquery/
+            $("#getBlockList").html('<i class="fas fa-paper-plane"></i> Listar contatos bloqueados');
+            var table_success = '';
+            //
+            if (response.result == 'error' && response.state == 'NOTFOUND') {
+                $("#getBlockList").html('<i class="fas fa-paper-plane"></i> Listar Contatos Bloqueados');
+                //
+                Lobibox.notify('warning', {
+                    title: false,
+                    soundPath: '/lobibox/sounds/',
+                    soundExt: '.ogg',
+                    sound: true,
+                    iconSource: "fontAwesome",
+                    icon: 'fas fa-times-circle',
+                    size: 'mini',
+                    delay: 5000,
+                    msg: response.message
+                });
+                //
+            } else if (response.result == 'info' && response.state == 'STARTING') {
+                $("#getBlockList").html('<i class="fas fa-paper-plane"></i> Listar Contatos Bloqueados');
+                //
+                Lobibox.notify('warning', {
+                    title: false,
+                    soundPath: '/lobibox/sounds/',
+                    soundExt: '.ogg',
+                    sound: true,
+                    iconSource: "fontAwesome",
+                    icon: 'fas fa-times-circle',
+                    size: 'mini',
+                    delay: 5000,
+                    msg: response.message
+                });
+                //
+            } else if (response.result == 'warning' && response.state == 'QRCODE') {
+                $("#getBlockList").html('<i class="fas fa-paper-plane"></i> Listar Contatos Bloqueados');
+                //
+                Lobibox.notify('warning', {
+                    title: false,
+                    soundPath: '/lobibox/sounds/',
+                    soundExt: '.ogg',
+                    sound: true,
+                    iconSource: "fontAwesome",
+                    icon: 'fas fa-times-circle',
+                    size: 'mini',
+                    delay: 5000,
+                    msg: response.message
+                });
+                //
+            } else {
+                var count = 1;
+                // ITERATING THROUGH OBJECTS
+                table_success += '<table id="org_tabela" class="table table-striped table-hover">';
+                table_success += '<thead class="thead-dark">';
+                table_success += '<tr>';
+                table_success += '<th scope="col">#</th>';
+                table_success += '<th scope="col">Nome</th>';
+                table_success += '<th scope="col">Numero</th>';
+                table_success += '<th scope="col">Foto Perfil</th>';
+                table_success += '</tr>';
+                table_success += '</thead>';
+                table_success += '<tbody id="table_success"></tbody>';
+
+                $.each(response, function (key, value) {
+                    //CONSTRUCTION OF ROWS HAVING 
+                    // DATA FROM JSON OBJECT
+                        if (value.isMyContact === true) {
+                            table_success += '<tr>';
+                            table_success += '<td>' + count + '</td>';
+                            table_success += '<td>'+value.name+'</td>';
+                            table_success += '<td>'+value.id.user+'</td>';
+                            if(!value.profilePicThumbObj.eurl){
+                                table_success += '<td><img class="img-fluid" src="/images/sem_foto.png" style="width: 28px; height: 28px"></td>';
+                            }else{
+                                table_success += '<td><a href="'+value.profilePicThumbObj.eurl+'" target="_blank" ><img class="img-fluid" src="'+value.profilePicThumbObj.eurl+'" style="width: 28px; height: 28px"></a></td>';
+                            }
+                            table_success += '</tr>';
+                            count++;
+                        }
+                        
+                });
+                $("#getBlockList").html('<i class="fas fa-paper-plane"></i> Listar Contatos Bloqueados');
+                //
+                table_success += '</table>';
+                //INSERTING ROWS INTO TABLE
+                $('#table_success').html(table_success);
+                //
+            }
+        },
+        error: (e) => {
+            $("#getBlockList").html('<i class="fas fa-paper-plane"></i> Listar Contatos Bloqueados');
+            //
+            Lobibox.notify('info', {
+                title: false,
+                soundPath: '/lobibox/sounds/',
+                soundExt: '.ogg',
+                sound: true,
+                iconSource: "fontAwesome",
+                icon: 'fas fa-info-circle',
+                size: 'mini',
+                delay: 5000,
+                msg: 'Erro interno, não foi possivel listar bloqueados!'
+            });
+
+        }
+
+    });
+});
+//
     $("#getAllContacts").on("click", function () {
         $('#table_success').html('');
         var SessionName = $("#SessionName").val();
@@ -1558,11 +1680,11 @@ $('document').ready(function () {
             success: function (response) {
                 //console.log(response);
                 //https://www.geeksforgeeks.org/how-to-fetch-data-from-json-file-and-display-in-html-table-using-jquery/
-                $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar contatos');
                 var table_success = '';
                 //
                 if (response.result == 'error' && response.state == 'NOTFOUND') {
-                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar Contatos');
                     //
                     Lobibox.notify('warning', {
                         title: false,
@@ -1577,7 +1699,7 @@ $('document').ready(function () {
                     });
                     //
                 } else if (response.result == 'info' && response.state == 'STARTING') {
-                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar Contatos');
                     //
                     Lobibox.notify('warning', {
                         title: false,
@@ -1592,7 +1714,7 @@ $('document').ready(function () {
                     });
                     //
                 } else if (response.result == 'warning' && response.state == 'QRCODE') {
-                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar Contatos');
                     //
                     Lobibox.notify('warning', {
                         title: false,
@@ -1609,7 +1731,7 @@ $('document').ready(function () {
                 } else {
                     var count = 1;
                     // ITERATING THROUGH OBJECTS
-                    table_success += '<table class="table table-striped table-hover">';
+                    table_success += '<table id="org_tabela" class="table table-striped table-hover">';
 					table_success += '<thead class="thead-dark">';
                     table_success += '<tr>';
                     table_success += '<th scope="col">#</th>';
@@ -1638,7 +1760,7 @@ $('document').ready(function () {
                             }
                             
                     });
-                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                    $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar Contatos');
                     //
                     table_success += '</table>';
                     //INSERTING ROWS INTO TABLE
@@ -1647,7 +1769,7 @@ $('document').ready(function () {
                 }
             },
             error: (e) => {
-                $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar todos os contatos');
+                $("#getAllContacts").html('<i class="fas fa-paper-plane"></i> Listar Contatos');
                 //
                 Lobibox.notify('info', {
                     title: false,
@@ -1658,7 +1780,7 @@ $('document').ready(function () {
                     icon: 'fas fa-info-circle',
                     size: 'mini',
                     delay: 5000,
-                    msg: 'Erro interno, não foi possivel listar os contatos!'
+                    msg: 'Erro interno, não foi possivel listar contatos!'
                 });
 
             }
@@ -1680,11 +1802,11 @@ $('document').ready(function () {
             success: function (response) {
                 console.log(response);
                 //https://www.geeksforgeeks.org/how-to-fetch-data-from-json-file-and-display-in-html-table-using-jquery/
-                $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar Grupos');
                 var table_success = '';
                 //
                 if (response.result == 'error' && response.state == 'NOTFOUND') {
-                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar Grupos');
                     //
                     Lobibox.notify('warning', {
                         title: false,
@@ -1699,7 +1821,7 @@ $('document').ready(function () {
                     });
                     //
                 } else if (response.result == 'info' && response.state == 'STARTING') {
-                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar Grupos');
                     //
                     Lobibox.notify('warning', {
                         title: false,
@@ -1714,7 +1836,7 @@ $('document').ready(function () {
                     });
                     //
                 } else if (response.result == 'warning' && response.state == 'QRCODE') {
-                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar Grupos');
                     //
                     Lobibox.notify('warning', {
                         title: false,
@@ -1731,7 +1853,7 @@ $('document').ready(function () {
                 } else {
                     var count = 1;
                     // ITERATING THROUGH OBJECTS
-                    table_success += '<table class="table table-striped table-hover">';
+                    table_success += '<table id="org_tabela" class="table table-striped table-hover">';
 					table_success += '<thead class="thead-dark">';
                     table_success += '<tr>';
                     table_success += '<th scope="col">#</th>';
@@ -1758,7 +1880,7 @@ $('document').ready(function () {
                             }
                             
                     });
-                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                    $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar Grupos');
                     //
                     table_success += '</table>';
                     //INSERTING ROWS INTO TABLE
@@ -1767,7 +1889,7 @@ $('document').ready(function () {
                 }
             },
             error: (e) => {
-                $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar todos os Grupos');
+                $("#getAllGroups").html('<i class="fas fa-paper-plane"></i> Listar Grupos');
                 //
                 Lobibox.notify('info', {
                     title: false,
@@ -1778,7 +1900,7 @@ $('document').ready(function () {
                     icon: 'fas fa-info-circle',
                     size: 'mini',
                     delay: 5000,
-                    msg: 'Erro interno, não foi possivel listar os grupos!'
+                    msg: 'Erro interno, não foi possivel listar grupos!'
                 });
 
             }
