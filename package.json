@@ -2,10 +2,10 @@
   "name": "mywhats",
   "version": "1.0.0",
   "description": "Este projeto usa como base o Venom-bot, um navegador virtual sem interface gráfica que abre o whatsapp web e executa todos os comandos via código possibilitando assim a automação de todas as funções.",
-  "main": "index.js",
+  "main": "sistem.js",
   "private": true,
   "scripts": {
-    "start": "node index.js",
+    "start": "node sistem.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
