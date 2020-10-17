@@ -24,7 +24,7 @@ sis.use("/api", api);
 //
 //http
 sis.listen(port, () => {
-    console.log("Sistema rodando em : http://" + hostname + ":" + port);
+    console.log("App Running : http://" + hostname + ":" + port);
 });
 // End the server sistema
 //
