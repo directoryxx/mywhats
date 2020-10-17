@@ -25,6 +25,7 @@ router.post("/Start", async (req, res, next) => {
     if (["CONNECTED"].includes(session.state)) {
         res.status(200).json({
             result: 'success',
+            me: session.client,
             state: session.state,
             message: "Sistema iniciado"
         });
@@ -114,9 +115,10 @@ router.post("/Close", async (req, res, next) => {
 //
 //
 router.post("/sendText", async (req, res, next) => {
+    console.log("kirim");
     var result = await Sessions.sendText(
         req.body.SessionName,
-        apenasNumeros(req.body.phonefull),
+        req.body.phonefull,
         req.body.msg
     );
     //console.log(result);
@@ -239,7 +241,7 @@ router.post("/getAllContacts", async (req, res, next) => {
 //
 router.post("/loadAndGetAllMessagesInChat", async (req, res, next) => {
     var result = await Sessions.loadAndGetAllMessagesInChat(
-        req.body.SessionName, 
+        req.body.SessionName,
         apenasNumeros(req.body.phonefull)
     );
     res.json(result);
@@ -250,7 +252,7 @@ router.post("/loadAndGetAllMessagesInChat", async (req, res, next) => {
 //
 router.post("/getStatus", async (req, res, next) => {
     var result = await Sessions.getStatus(
-        req.body.SessionName, 
+        req.body.SessionName,
         apenasNumeros(req.body.phonefull)
     );
     res.json(result);
@@ -261,9 +263,9 @@ router.post("/getStatus", async (req, res, next) => {
 //
 router.post("/getNumberProfile", async (req, res, next) => {
     var result = await Sessions.getNumberProfile(
-        req.body.SessionName, 
+        req.body.SessionName,
         apenasNumeros(req.body.phonefull)
-     );
+    );
     res.json(result);
 }); //getNumberProfile
 //
@@ -296,7 +298,7 @@ router.post("/getAllGroups", async (req, res, next) => {
 //
 router.post("/getProfilePicFromServer", async (req, res, next) => {
     var result = await Sessions.getProfilePicFromServer(
-        req.body.SessionName, 
+        req.body.SessionName,
         apenasNumeros(req.body.phonefull)
     );
     res.json(result);
@@ -340,7 +342,7 @@ router.post("/leaveGroup", async (req, res, next) => {
     var result = await Sessions.leaveGroup(
         req.body.SessionName,
         req.body.groupId
-        );
+    );
     res.json(result);
 }); //close
 //
@@ -348,7 +350,7 @@ router.post("/getGroupMembers", async (req, res, next) => {
     var result = await Sessions.getGroupMembers(
         req.body.SessionName,
         req.body.groupId
-        );
+    );
     res.json(result);
 }); //close
 //

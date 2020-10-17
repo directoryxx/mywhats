@@ -39,6 +39,7 @@ module.exports = class Sessions {
             });
             session.client = Sessions.initSession(sessionName);
         } else {
+            console.log(session);
             console.log('- Nome da sessão:', session.name);
             console.log('- Status do sistema:', session.state);
             console.log('- Status da sessão:', session.status);
@@ -234,7 +235,7 @@ module.exports = class Sessions {
             // Listen to ack's
             client.onAck((ack) => {
                 console.log('- Listen to acks:', ack);
-              });
+            });
             // Listen when client has been added to a group
             client.onAddedToGroup((chatEvent) => {
                 console.log('- Listen when client has been added to a group:', chatEvent);
@@ -302,11 +303,13 @@ module.exports = class Sessions {
     //
     static async sendText(sessionName, number, text) {
         console.log("- Enviando menssagem de texto!");
+        console.log(number);
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
                 var resultSendText = await session.client.then(async client => {
                     // Send basic text
+
                     return await client.sendText(number + '@c.us', text).then((result) => {
                         //console.log("Result: ", result); //return object success
                         //return { result: "success", state: session.state, message: "Sucesso ao enviar menssagem" };
@@ -718,7 +721,7 @@ module.exports = class Sessions {
             };
         }
     } //sendFile
-        //
+    //
     // ------------------------------------------------------------------------------------------------//
     //
     //
@@ -1596,7 +1599,7 @@ module.exports = class Sessions {
                     return await client.createGroup(groupname, [
                         '111111111111@c.us',
                         '222222222222@c.us',
-                      ]).then((result) => {
+                    ]).then((result) => {
                         //console.log('Result: ', result); //return object success
                         return result;
                     }).catch((erro) => {
