@@ -14,7 +14,6 @@ const {
 module.exports = class Sessions {
     //
     static async start(sessionName) {
-        //console.log("- Criando sessão "+ sessionName);
         Sessions.sessions = Sessions.sessions || []; //start array
 
         var session = Sessions.getSession(sessionName);
@@ -31,8 +30,8 @@ module.exports = class Sessions {
             Sessions.setup(sessionName);
         } else if (["CONFLICT", "UNPAIRED", "UNLAUNCHED", "UNPAIRED_IDLE"].includes(session.state)) {
             session.status = 'notLogged';
-            console.log('- Status do sistema:', session.state);
-            console.log('- Status da sessão:', session.status);
+            console.log('- System status:', session.state);
+            console.log('- Session status:', session.status);
             console.log("- Client UseHere");
             session.client.then(client => {
                 client.useHere();
@@ -40,9 +39,9 @@ module.exports = class Sessions {
             session.client = Sessions.initSession(sessionName);
         } else {
             console.log(session);
-            console.log('- Nome da sessão:', session.name);
-            console.log('- Status do sistema:', session.state);
-            console.log('- Status da sessão:', session.status);
+            console.log('- Session name:', session.name);
+            console.log('- System status:', session.state);
+            console.log('- Session status:', session.status);
         }
         return session;
     } //start
@@ -51,7 +50,7 @@ module.exports = class Sessions {
     //
     //
     static async addSesssion(sessionName) {
-        console.log("- Adicionando sessão");
+        console.log("- Adding session");
         var newSession = {
             name: sessionName,
             qrcode: false,
@@ -60,7 +59,7 @@ module.exports = class Sessions {
             state: 'STARTING'
         }
         Sessions.sessions.push(newSession);
-        console.log("- Nova sessão: " + newSession.state);
+        console.log("- New session: " + newSession.state);
 
         //setup session
         newSession.client = Sessions.initSession(sessionName);
@@ -99,18 +98,18 @@ module.exports = class Sessions {
     //
     //
     static async initSession(sessionName) {
-        console.log("- Iniciando sistema");
+        console.log("- System starting");
         var session = Sessions.getSession(sessionName);
         const client = await venom.create(sessionName, (base64Qr, asciiQR) => {
-            console.log('- Nome da sessão:', session.name);
+            console.log('- Session name:', session.name);
             //
             session.state = "QRCODE";
             //
-            console.log("- Captura do QR-Code");
+            console.log("- Capture the QRCODE");
             //console.log(base64Qr);
             session.qrcode = base64Qr;
             //
-            console.log("- Captura do asciiQR");
+            console.log("- Capture the asciiQR");
             // Registrar o QR no terminal
             //console.log(asciiQR);
             session.CodeasciiQR = asciiQR;
@@ -139,7 +138,7 @@ module.exports = class Sessions {
             );
             */
         }, (statusSession) => {
-            console.log('- Status da sessão:', statusSession);
+            console.log('- Session status:', statusSession);
             //return isLogged || notLogged || browserClose || qrReadSuccess || qrReadFail
 
             if (statusSession == 'isLogged') {
@@ -203,7 +202,7 @@ module.exports = class Sessions {
     //
     //
     static async setup(sessionName) {
-        console.log("- Sinstema iniciado!");
+        console.log("- System starting!");
         var session = Sessions.getSession(sessionName);
         await session.client.then(client => {
             // Listen to messages
@@ -221,7 +220,7 @@ module.exports = class Sessions {
             });
             // State change
             client.onStateChange((state) => {
-                console.log('- Status do sistema:', state);
+                console.log('- System status:', state);
                 session.state = state;
                 const conflits = [
                     venom.SocketState.CONFLICT,
@@ -247,7 +246,7 @@ module.exports = class Sessions {
     //
     //
     static async closeSession(sessionName) {
-        console.log("- Fechando sessão");
+        console.log("- Closing session");
         var session = Sessions.getSession(sessionName);
         if (session) { //só adiciona se não existir
             if (session.state != "CLOSED") {
@@ -256,35 +255,35 @@ module.exports = class Sessions {
                         try {
                             await client.close();
                         } catch (error) {
-                            console.log("- Erro ao fechar sistema:", error.message);
+                            console.log("- Error closing system:", error.message);
                         }
                         session.state = "CLOSED";
                         session.client = false;
-                        console.log("- Sistema fechado");
+                        console.log("- Closed system");
                     });
                 return {
                     result: "success",
                     state: session.state,
-                    message: "Sistema fechado"
+                    message: "Closed system"
                 };
             } else { //close
                 if (session.state == "STARTING") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shut down"
                     };
                 }
             }
@@ -292,7 +291,7 @@ module.exports = class Sessions {
             return {
                 result: "error",
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Offline"
             };
         }
     } //closeSession
@@ -302,7 +301,7 @@ module.exports = class Sessions {
     // Funções básicas (uso)
     //
     static async sendText(sessionName, number, text) {
-        console.log("- Enviando menssagem de texto!");
+        console.log("- Mengirim Pesan Teks");
         console.log(number);
         var session = Sessions.getSession(sessionName);
         if (session) {
@@ -326,19 +325,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shut down"
                     };
                 }
             }
@@ -346,13 +345,13 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Offline"
             };
         }
     } //sendText
     //
     static async sendTextMult(sessionName, base64Data, mimetype, originalname, msgtxtmass) {
-        console.log("- Enviando menssagem texto lista de conatos!");
+        console.log("- Sending text message contact list!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -380,7 +379,7 @@ module.exports = class Sessions {
                                     erro: false,
                                     status: 'OK',
                                     number: number,
-                                    menssagem: 'Menssagem envida com sucesso'
+                                    menssagem: 'Message sent successfully'
                                 };
                             }).catch((erro) => {
                                 //console.error(erro); //return object error
@@ -388,7 +387,7 @@ module.exports = class Sessions {
                                     erro: true,
                                     status: '404',
                                     number: number,
-                                    menssagem: 'Erro ao enviar menssagem'
+                                    menssagem: 'Error sending message'
                                 };
                             });
 
@@ -408,19 +407,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -455,19 +454,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -475,7 +474,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //sendText
@@ -508,19 +507,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -528,13 +527,13 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //sendImage
     //
     static async sendImageMult(sessionName, base64DataContato, originalnameContato, base64DataImagem, originalnameImagem, msgimgmass) {
-        console.log("- Enviando imagem lista de contatos!");
+        console.log("- Sending contact list image!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -569,7 +568,7 @@ module.exports = class Sessions {
                                         erro: false,
                                         status: 'OK',
                                         number: number,
-                                        menssagem: 'Menssagem envida com sucesso'
+                                        menssagem: 'Message sent successfully'
                                     };
                                 }).catch((erro) => {
                                     //console.error(erro); //return object error
@@ -577,7 +576,7 @@ module.exports = class Sessions {
                                         erro: true,
                                         status: '404',
                                         number: number,
-                                        menssagem: 'Erro ao enviar menssagem'
+                                        menssagem: 'Error sending message'
                                     };
                                 });
 
@@ -599,19 +598,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -619,13 +618,13 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //sendImage
     //
     static async sendImageGrup(sessionName, number, base64Data, fileName, caption) {
-        console.log("- Enviando imagem para grupo!");
+        console.log("- Sending image to group!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -648,19 +647,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -668,7 +667,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //sendImageGrup
@@ -677,7 +676,7 @@ module.exports = class Sessions {
     //
     //
     static async sendFile(sessionName, number, base64Data, fileName, caption) {
-        console.log("- Enviando documento!");
+        console.log("- Sending document!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -703,13 +702,13 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 }
             }
@@ -717,7 +716,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //sendFile
@@ -727,7 +726,7 @@ module.exports = class Sessions {
     //
     // Returns browser session token
     static async getSessionTokenBrowser(sessionName) {
-        console.log("- Obtendo lista de bloqueados!");
+        console.log("- Getting blocked list!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -747,19 +746,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -767,7 +766,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getSessionTokenBrowser
@@ -778,7 +777,7 @@ module.exports = class Sessions {
     //
     // Chama sua lista de contatos bloqueados (retorna uma matriz)
     static async getBlockList(sessionName) {
-        console.log("- Obtendo lista de bloqueados!");
+        console.log("- Getting blocked list!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -798,19 +797,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -818,7 +817,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getBlockList
@@ -828,7 +827,7 @@ module.exports = class Sessions {
     //
     // Retrieve contacts
     static async getAllContacts(sessionName) {
-        console.log("- Obtendo todos os contatos!");
+        console.log("- Getting all contacts!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -848,19 +847,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -868,7 +867,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getAllContacts
@@ -878,7 +877,7 @@ module.exports = class Sessions {
     //
     // Recupere todas as mensagens no chat
     static async loadAndGetAllMessagesInChat(sessionName, numero) {
-        console.log("- Obtendo todas as mensagens no chat!");
+        console.log("- Getting all messages in the chat!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -898,19 +897,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -918,7 +917,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //loadAndGetAllMessagesInChat
@@ -928,7 +927,7 @@ module.exports = class Sessions {
     //
     // Recuperar status de contato
     static async getStatus(sessionName, numero) {
-        console.log("- Obtendo status!");
+        console.log("- Getting status!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -948,19 +947,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -968,7 +967,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getStatus
@@ -978,7 +977,7 @@ module.exports = class Sessions {
     //
     // Recuperar perfil de usuário
     static async getNumberProfile(sessionName, numero) {
-        console.log("- Obtendo o perfil do número!");
+        console.log("- Getting the profile of the number!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -998,19 +997,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1018,7 +1017,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getNumberProfile
@@ -1028,7 +1027,7 @@ module.exports = class Sessions {
     //
     // Recupera todas as mensagens não lidas
     static async getAllUnreadMessages(sessionName) {
-        console.log("- Obtendo todas as mensagens não lidas!");
+        console.log("- Getting all unread messages!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1048,19 +1047,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1068,7 +1067,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getAllUnreadMessages
@@ -1078,7 +1077,7 @@ module.exports = class Sessions {
     //
     // Recuperar todos os chats
     static async getAllChats(sessionName) {
-        console.log("- Obtendo todos os chats!");
+        console.log("- Getting all the chats!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1098,19 +1097,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1118,7 +1117,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getAllChats
@@ -1128,7 +1127,7 @@ module.exports = class Sessions {
     //
     // Recuperar todos os grupos
     static async getAllGroups(sessionName) {
-        console.log("- Obtendo todos os grupos!");
+        console.log("- Getting all groups!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1148,19 +1147,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1168,7 +1167,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getAllGroups
@@ -1178,7 +1177,7 @@ module.exports = class Sessions {
     //
     // Recuperar fic de perfil (como url)
     static async getProfilePicFromServer(sessionName, numero) {
-        console.log("- Obtendo a foto do perfil do servidor!");
+        console.log("- Getting the profile picture of the server!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1198,19 +1197,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1218,7 +1217,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getProfilePicFromServer
@@ -1228,7 +1227,7 @@ module.exports = class Sessions {
     //
     // Recuperar chat / conversa
     static async getChat(sessionName, numero) {
-        console.log("- Obtendo chats!");
+        console.log("- Getting chats!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1248,19 +1247,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1268,7 +1267,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getChat
@@ -1278,7 +1277,7 @@ module.exports = class Sessions {
     //
     // Verifique se o número existe
     static async checkNumberStatus(sessionName, numero) {
-        console.log("- Verifique se o número existe!");
+        console.log("- Check if the number exists!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1299,19 +1298,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1319,13 +1318,13 @@ module.exports = class Sessions {
             return {
                 result: "error",
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //checkNumberStatus
     //
     static async checkNumberStatusMult(sessionName, base64Data, mimetype, originalname) {
-        console.log("- Enviando menssagem!");
+        console.log("- Sending a message!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1372,19 +1371,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1392,7 +1391,7 @@ module.exports = class Sessions {
             return {
                 result: "error",
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //sendTextMult
@@ -1403,7 +1402,7 @@ module.exports = class Sessions {
     //
     // Deixar o grupo
     static async leaveGroup(sessionName, groupId) {
-        console.log("- Obtendo chats!");
+        console.log("- Getting chats!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1423,19 +1422,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1443,14 +1442,14 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //leaveGroup
     //
     // Obtenha membros do grupo
     static async getGroupMembers(sessionName, groupId) {
-        console.log("- Obtendo chats!");
+        console.log("- Getting chats!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1470,19 +1469,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1490,14 +1489,14 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getGroupMembers
     //
     // Obter IDs de membros do grupo
     static async getGroupMembersIds(sessionName, groupId) {
-        console.log("- Obtendo chats!");
+        console.log("- Getting chats!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1517,19 +1516,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1537,14 +1536,14 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getGroupMembersIds
     //
     // Gerar link de url de convite de grupo
     static async getGroupInviteLink(sessionName, groupId) {
-        console.log("- Obtendo chats!");
+        console.log("- Getting chats!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1564,19 +1563,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1584,14 +1583,14 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //getGroupInviteLink
     //
     // Criar grupo (título, participantes a adicionar)
     static async createGroup(sessionName, groupname, contatos) {
-        console.log("- Obtendo chats!");
+        console.log("- Getting chats!");
         var session = Sessions.getSession(sessionName);
         if (session) {
             if (session.state == "CONNECTED") {
@@ -1614,19 +1613,19 @@ module.exports = class Sessions {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema iniciando"
+                        message: "System starting"
                     };
                 } else if (session.state == "QRCODE") {
                     return {
                         result: "warning",
                         state: session.state,
-                        message: "Sistema aguardando leitura do QR-Code"
+                        message: "System waiting for QR-Code reading"
                     };
                 } else if (session.state == "CLOSED") {
                     return {
                         result: "info",
                         state: session.state,
-                        message: "Sistema encerrado"
+                        message: "System shutdown"
                     };
                 }
             }
@@ -1634,7 +1633,7 @@ module.exports = class Sessions {
             return {
                 result: 'error',
                 state: "NOTFOUND",
-                message: "Sistema Off-line"
+                message: "System Off-line"
             };
         }
     } //createGroup

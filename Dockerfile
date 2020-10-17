@@ -71,7 +71,7 @@ RUN npm install
 # Copie o restante do código-fonte do seu aplicativo do host para o sistema de arquivos de imagem.
 COPY . .
 
-EXPOSE 8000
+EXPOSE 9000
 # EXPOSE 80 443
 
 # Execute o comando especificado dentro do contêiner.

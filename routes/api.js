@@ -23,25 +23,25 @@ router.post("/Start", async (req, res, next) => {
         res.status(200).json({
             result: 'success',
             state: session.state,
-            message: "Sistema iniciado"
+            message: "System starting"
         });
     } else if (["STARTING"].includes(session.state)) {
         res.status(200).json({
             result: 'info',
             state: session.state,
-            message: "Sistema iniciando"
+            message: "System starting"
         });
     } else if (["QRCODE"].includes(session.state)) {
         res.status(200).json({
             result: 'warning',
             state: session.state,
-            message: "Sistema aguardando leitura do QR-Code"
+            message: "System waiting for QR-Code reading"
         });
     } else {
         res.status(200).json({
             result: 'error',
             message: session.state,
-            message: "Sistema Off-line"
+            message: "System Off-line"
         });
     }
     //
@@ -69,7 +69,7 @@ router.post("/QRCode", async (req, res, next) => {
                     result: "warning",
                     state: session.state,
                     qrcode: session.qrcode,
-                    message: "Sistema aguardando leitura do QR-Code"
+                    message: "System waiting for QR-Code reading"
                 });
             }
         } else {
@@ -77,13 +77,13 @@ router.post("/QRCode", async (req, res, next) => {
                 res.status(200).json({
                     result: 'success',
                     state: session.state,
-                    message: "Sistema iniciado"
+                    message: "System starting"
                 });
             } else if (["STARTING"].includes(session.state)) {
                 res.status(200).json({
                     result: 'info',
                     state: session.state,
-                    message: "Sistema iniciando"
+                    message: "System starting"
                 });
             }
         }
@@ -91,7 +91,7 @@ router.post("/QRCode", async (req, res, next) => {
         res.status(200).json({
             result: 'error',
             state: "NOTFOUND",
-            message: "Sistema Off-line"
+            message: "System Off-line"
         });
     }
     //
